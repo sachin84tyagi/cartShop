@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const CartItem = ({ name, price, onClick }) => {
+const CartItem = ({ name, price, qty, onClick, onIncrement, onDecrement }) => {
   return (
     <div className="cart-item">
       <div>
@@ -9,6 +9,10 @@ const CartItem = ({ name, price, onClick }) => {
           X
         </button>
         <span className="cart-item__name">{name}</span>
+        <span className="cart-item__name">{qty}</span>
+        &nbsp;
+        <button onClick={onIncrement}>+</button>
+        <button onClick={onDecrement}>-</button>
       </div>
       <div className="cart-item__price">{price.actual}</div>
     </div>
@@ -20,6 +24,8 @@ CartItem.propTypes = {
   price: PropTypes.object,
   currency: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
+  onIncrement: PropTypes.func.isRequired,
+  onDecrement: PropTypes.func.isRequired,
 };
 
 export default CartItem;

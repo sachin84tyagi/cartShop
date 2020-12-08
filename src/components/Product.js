@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { addToCart, removeFromCart, isInCart } from "../ducks/cart";
+import { addToCart, removeFromCart, isInCart } from "../reducers/cart";
 
 class Product extends Component {
   handleClick = () => {
@@ -9,7 +9,6 @@ class Product extends Component {
     if (isInCart) {
       removeFromCart(id);
     } else {
-      console.log("ADD TO CART");
       addToCart(id);
     }
   };
@@ -51,6 +50,7 @@ Product.propTypes = {
 };
 
 const mapStateToProps = (state, props) => {
+  console.log("mapStateToProps isInCart PROPS :: ", props);
   return {
     isInCart: isInCart(state, props),
   };

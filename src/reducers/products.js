@@ -9,6 +9,15 @@ export function getProducts(state, props) {
 }
 
 export function getProduct(state, props) {
-  console.log("state.products :: ", state.products);
   return state.products.find((item) => item.id === props.id);
 }
+
+export function getCartProduct(state, props) {
+  const cartProducts = state.products.find((item) => item.id === props.id);
+  const cartWithQty = { ...cartProducts, qty: 1 };
+  return cartWithQty;
+}
+
+// export function getAllProduct() {
+//   return state.products.find((item) => item.id === prductId);
+// }
