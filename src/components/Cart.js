@@ -2,7 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
-  getItems,
   getCurrency,
   getTotal,
   removeFromCart,
@@ -19,6 +18,9 @@ const Cart = ({
   incrementCartItem,
   decrementCartItem,
 }) => {
+  console.log("TOTAL IN CART JS :: ", total)
+  console.log("items.length :: ", items.length)
+  const discount = parseInt(total[1]) - parseInt(total[0])
   return (
     <div>
       <h3>Shopping Cart</h3>
@@ -28,6 +30,11 @@ const Cart = ({
           <div className="panel-body">
             {items.length > 0 && (
               <div className="cart__body">
+                <div className="item-header">
+                  <div>Items(4)</div>
+                  <div>Quantity</div>
+                  <div>Price</div>
+                </div>
                 {items.map((item) => (
                   <CartItem
                     key={item.id}
@@ -37,12 +44,29 @@ const Cart = ({
                     onDecrement={() => decrementCartItem(item)}
                   />
                 ))}
+                <div className="totals">
+                  <h3>Total</h3>
+                  <div className="totals-item">
+                    <label>Items</label>
+                    <div className="totals-value" id="cart-subtotal">{total[1]}</div>
+                  </div>
+                  <div className="totals-item">
+                    <label>Discount</label>
+                    <div className="totals-value" id="cart-tax">-{discount}</div>
+                  </div>
+                  <div className="totals-item">
+                    <label>Type Discount</label>
+                    <div className="totals-value" id="cart-shipping">-0</div>
+                  </div>
+                  <div className="totals-item totals-item-total">
+                    <label>Grand Total</label>
+                    <div className="totals-value" id="cart-total">{total[0]}</div>
+                  </div>
+                </div>
               </div>
             )}
             {items.length === 0 && <div className="">Cart is empty</div>}
-            <div className="cart__total">
-              Total: {total} {currency}
-            </div>
+
           </div>
         </div>
       </div>
@@ -52,17 +76,13 @@ const Cart = ({
 
 Cart.propTypes = {
   items: PropTypes.array,
-  total: PropTypes.number,
-  currency: PropTypes.string,
+  total: PropTypes.array,
   removeFromCart: PropTypes.func.isRequired,
   incrementCartItem: PropTypes.func.isRequired,
   decrementCartItem: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, props) => {
-  console.log("mapStateToProps state", state);
-  //const itemData = getItems(state, props);
-  //console.log("getItems itemData :: ", itemData);
   return {
     items: state.cart.items,
     currency: getCurrency(state, props),

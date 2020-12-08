@@ -14,26 +14,32 @@ class Product extends Component {
   };
 
   render() {
-    console.log("PROPS :: => ", this.props);
-    const { name, price, discount, image, isInCart } = this.props;
+    const { name, price, image, isInCart } = this.props;
+
+    //const calDiscount = parseInt(price.display) - parseInt(price.actual) / 100;
+    const calDiscount = 100 * (price.display - price.actual) / price.display;
 
     return (
+
       <div className="product thumbnail">
         <img src={image} alt="product" />
         <div className="caption">
           <h3>{name}</h3>
-          <div className="product__price">{price.actual}</div>
-          <div className="product__button-wrap">
+          <div className="item-price"><span className="line-through">{price.display}</span> <strong>{price.actual}</strong></div>
+          <div className={isInCart ? "btnDisabled" : "btn"}>
             <button
               disabled={isInCart ? "disabled" : ""}
-              className={isInCart ? "btn btn-danger" : "btn btn-primary"}
               onClick={this.handleClick}
-            >
-              {isInCart ? "Added" : "Add to cart"}
+            >{isInCart ? "Added" : "Add to cart"}
             </button>
           </div>
         </div>
+        <div className="discount">
+          {Math.ceil(calDiscount)}%
+        </div>
       </div>
+
+
     );
   }
 }
@@ -50,7 +56,6 @@ Product.propTypes = {
 };
 
 const mapStateToProps = (state, props) => {
-  console.log("mapStateToProps isInCart PROPS :: ", props);
   return {
     isInCart: isInCart(state, props),
   };

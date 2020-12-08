@@ -33,7 +33,6 @@ export default function cart(state = initialState, action = {}) {
 }
 
 function handleProduct(state, payload) {
-  console.log("handleProduct payload", payload);
   return {
     ...state,
     products: payload.products,
@@ -50,34 +49,27 @@ function handleCartInc(state, payload) {
 }
 
 function handleCartDec(state, payload) {
-  payload.item.qty = payload.item.qty > 0 ? payload.item.qty - 1 : 0;
+  payload.item.qty = payload.item.qty > 1 ? payload.item.qty - 1 : 1;
   return {
     ...state,
     items: [...state.items],
   };
 }
 function handleCartAdd(state, payload) {
-  const productId = payload.productId;
-  const data = getProductById(productId);
-  //
-  console.log("HANDLE CART ARRAY :: data ", data);
-  const sampleData = [...state.items, data];
-  console.log("sampleData :: ", sampleData);
-
   return {
     ...state,
-    items: [...state.items, data],
+    items: [...state.items, getProductById(payload.productId)],
   };
 }
 
 function handleCartRemove(state, payload) {
   return {
     ...state,
-    items: state.items.filter((id) => id !== payload.productId),
+    items: state.items.filter((item) => item.id !== payload.productId),
   };
 }
 
-function addQty(state) {}
+function addQty(state) { }
 // action creators
 export function addToCart(productId) {
   return {
@@ -89,6 +81,7 @@ export function addToCart(productId) {
 }
 
 export function removeFromCart(productId) {
+
   return {
     type: CART_REMOVE,
     payload: {
@@ -128,7 +121,6 @@ export function getAllProductsData() {
 // selectors
 export function isInCart(state, props) {
   let ids = [];
-  console.log("state.cart.items :: ", state.cart.items);
   const items = state.cart.items ? state.cart.items : null;
   if (items != null) {
     items.map((val, index) => {
@@ -139,12 +131,10 @@ export function isInCart(state, props) {
 }
 
 export function getItems(state, props) {
-  console.log("getItems :: state.cart.items ", state.cart.items);
   return state.cart.items.map((id) => getCartProduct(state, { id }));
 }
 
 export function getCartItems(state, props) {
-  console.log("getItems :: state.cart.items ", state.cart.items);
   return state.cart.items.map((id) => getCartProduct(state, { id }));
 }
 
@@ -153,17 +143,40 @@ export function getCurrency(state, props) {
 }
 
 export function getTotal(state, props) {
-  let ids = [];
-  console.log("state.cart.items :: ", state.cart.items);
-  const items = state.cart.items ? state.cart.items : null;
-  if (items != null) {
-    items.map((val, index) => {
-      ids.push(val.id);
-    });
+  let actualPrice = 0;
+  let displayPrice = 0
+  if (state.cart.items.length > 0) {
+    state.cart.items.map((item) => {
+      let totalActual = item.price.actual * item.qty;
+      let totalDisplay = item.price.display * item.qty;
+      actualPrice = actualPrice + totalActual;
+      displayPrice = displayPrice + totalDisplay;
+    })
   }
 
-  return ids.reduce((acc, id) => {
-    const item = getProduct(state, { id });
-    return acc + item.price.actual;
-  }, 0);
+  return [actualPrice, displayPrice]
+  // if (state.cart.items.length > 0) {
+  //   console.log("state.cart.items :: ", state.cart.items)
+  //   const getTotal = state.cart.items.reduce((acc, value) => {
+  //     console.log("acc :: ", acc.price.actual);
+  //     console.log("value :: ", value.price.actual)
+  //     return acc.price.actual + value.price.actual
+  //   });
+  //   console.log("getTotal :: ", getTotal);
+  //   return getTotal;
+  // }
+
+  // let ids = [];
+  // const items = state.cart.items ? state.cart.items : null;
+  // if (items != null) {
+  //   items.map((val, index) => {
+  //     ids.push(val.id);
+  //   });
+  // }
+
+
+  // return ids.reduce((acc, id) => {
+  //   const item = getProduct(state, { id });
+  //   return acc + item.price.actual;
+  // }, 0);
 }
